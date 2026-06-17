@@ -1,0 +1,92 @@
+{
+  "caseDefinitionName": "SecurityAlertTriage",
+  "displayName": "Security Alert Triage",
+  "description": "AI-powered security alert processing and incident routing",
+  "version": "1.0.0",
+  "stages": [
+    {
+      "name": "AlertIngestion",
+      "displayName": "Alert Received",
+      "description": "Security alert arrives from SIEM, EDR, or other source",
+      "type": "automated",
+      "entrypoint": "ReceiveAlert"
+    },
+    {
+      "name": "AIAnalysis",
+      "displayName": "Claude AI Analysis",
+      "description": "Claude AI classifies severity, extracts IOCs, recommends actions",
+      "type": "automated",
+      "entrypoint": "AnalyzeWithClaude",
+      "outputs": ["severity", "confidence", "threatType", "indicators", "immediateActions"]
+    },
+    {
+      "name": "SeverityRouter",
+      "displayName": "Route by Severity",
+      "description": "Branch to appropriate response path based on AI classification",
+      "type": "decision",
+      "branches": [
+        {
+          "condition": "severity == 'CRITICAL'",
+          "nextStage": "CriticalResponse"
+        },
+        {
+          "condition": "severity == 'HIGH'",
+          "nextStage": "HighResponse"
+        },
+        {
+          "condition": "severity == 'MEDIUM'",
+          "nextStage": "MediumResponse"
+        },
+        {
+          "condition": "severity == 'LOW'",
+          "nextStage": "LowResponse"
+        }
+      ]
+    },
+    {
+      "name": "CriticalResponse",
+      "displayName": "Critical Incident Response",
+      "description": "P1 response: page on-call, notify exec, isolate host, open war room",
+      "type": "automated",
+      "slaMinutes": 15,
+      "actions": ["PageOnCall", "NotifyExecutive", "IsolateHost", "CreateWarRoom", "GenerateReport"]
+    },
+    {
+      "name": "HighResponse",
+      "displayName": "High Severity Response",
+      "description": "P2 response: create ticket, notify security team, block IOCs",
+      "type": "automated",
+      "slaMinutes": 60,
+      "actions": ["CreateP2Ticket", "NotifySecurityTeam", "BlockIOC", "GenerateReport"]
+    },
+    {
+      "name": "MediumResponse",
+      "displayName": "Medium Severity Response",
+      "description": "P3 response: log ticket, notify analyst for review",
+      "type": "human",
+      "slaMinutes": 240,
+      "actions": ["CreateP3Ticket", "NotifyAnalyst", "LogIOC"]
+    },
+    {
+      "name": "LowResponse",
+      "displayName": "Low Severity Auto-Close",
+      "description": "P4 response: auto-remediate, log, close",
+      "type": "automated",
+      "slaMinutes": 1440,
+      "actions": ["AutoRemediate", "LogEvent", "CloseCase"]
+    },
+    {
+      "name": "HumanReview",
+      "displayName": "Analyst Review (optional)",
+      "description": "Human analyst reviews AI classification when confidence < 0.7",
+      "type": "human",
+      "trigger": "confidence < 0.7 OR false_positive_risk == 'HIGH'"
+    },
+    {
+      "name": "Closed",
+      "displayName": "Case Closed",
+      "description": "Incident resolved, report generated, post-mortem scheduled if P1/P2",
+      "type": "terminal"
+    }
+  ]
+}

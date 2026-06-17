@@ -1,0 +1,67 @@
+{
+  "ALERT-001": {
+    "severity": "HIGH",
+    "confidence": 0.92,
+    "threat_type": "Brute Force / Credential Attack",
+    "affected_systems": ["prod-db-01"],
+    "indicators": ["203.0.113.45", "847 failed SSH attempts in 3 minutes", "known scanner IP"],
+    "immediate_actions": ["Block IP 203.0.113.45 at firewall", "Enable SSH rate limiting on prod-db-01", "Check for any successful logins from this subnet"],
+    "containment_steps": ["Add IP to blocklist", "Review prod-db-01 auth logs for last 24h", "Rotate SSH credentials if any exposure found", "Alert DBA team"],
+    "false_positive_risk": "LOW",
+    "false_positive_reason": null,
+    "escalate_to_human": true,
+    "summary": "High-volume SSH brute force from threat-intel-flagged IP targeting production database server"
+  },
+  "ALERT-002": {
+    "severity": "CRITICAL",
+    "confidence": 0.97,
+    "threat_type": "Malware Execution / Macro-based Download",
+    "affected_systems": ["DESKTOP-HR-042"],
+    "indicators": ["Base64-encoded PowerShell", "winword.exe parent process", "http://bad.en/payload.exe download", "User: jsmith"],
+    "immediate_actions": ["Isolate DESKTOP-HR-042 from network immediately", "Kill powershell.exe and winword.exe processes", "Page incident response team"],
+    "containment_steps": ["Network isolate endpoint", "Preserve memory dump for forensics", "Reset jsmith credentials", "Scan for lateral movement from DESKTOP-HR-042", "Check email gateway for source phishing email"],
+    "false_positive_risk": "LOW",
+    "false_positive_reason": null,
+    "escalate_to_human": true,
+    "summary": "Macro-triggered PowerShell downloading external payload from HR workstation -- active malware execution"
+  },
+  "ALERT-003": {
+    "severity": "HIGH",
+    "confidence": 0.85,
+    "threat_type": "Credential Access / Secrets Enumeration",
+    "affected_systems": ["AWS Lambda: report-generator", "AWS Secrets Manager"],
+    "indicators": ["156 GetSecretValue calls in 2 minutes", "78x above baseline", "no recent deployment", "ap-southeast-2"],
+    "immediate_actions": ["Revoke Lambda execution role temporarily", "Review CloudTrail for what secrets were accessed", "Check if secrets have been rotated recently"],
+    "containment_steps": ["Suspend Lambda function", "Rotate all secrets accessed", "Review Lambda code for injected payload", "Enable GuardDuty threat intel integration"],
+    "false_positive_risk": "MEDIUM",
+    "false_positive_reason": "Could be a legitimate batch job or scheduled task not in baseline -- but 78x over baseline warrants investigation",
+    "escalate_to_human": true,
+    "summary": "AWS Lambda function accessing secrets 78x above baseline with no code changes -- likely compromised function or supply chain attack"
+  },
+  "ALERT-004": {
+    "severity": "MEDIUM",
+    "confidence": 0.78,
+    "threat_type": "Internal Reconnaissance",
+    "affected_systems": ["10.0.5.22", "subnet 10.0.1.0/24"],
+    "indicators": ["Port scan on 22,3389,1433,3306", "contractor account", "8-minute scan duration", "targeting server subnet"],
+    "immediate_actions": ["Identify and contact contractor assigned to 10.0.5.22", "Verify scan was authorized (pen test?)", "Block scan traffic if not authorized"],
+    "containment_steps": ["Review contractor access permissions", "Check if contractor account is still active/needed", "Monitor for lateral movement attempts", "Alert network team"],
+    "false_positive_risk": "MEDIUM",
+    "false_positive_reason": "Could be authorized pen test or contractor running a legitimate network audit tool -- needs verification",
+    "escalate_to_human": true,
+    "summary": "Contractor workstation conducting internal port scan of server subnet targeting common service ports"
+  },
+  "ALERT-005": {
+    "severity": "LOW",
+    "confidence": 0.95,
+    "threat_type": "Phishing Attempt (Blocked)",
+    "affected_systems": ["Email Gateway", "Finance Dept (3 users)"],
+    "indicators": ["paypa1.com (typosquat)", "paypa1-verify.xyz (malicious domain)", "Finance dept targeting", "link click attempts"],
+    "immediate_actions": ["Confirm email gateway blocked successfully", "Send security awareness notification to Finance team", "Add domains to threat intel blocklist"],
+    "containment_steps": ["Verify no payload delivery occurred", "Add paypa1.com and paypa1-verify.xyz to email/web blocklists", "Send targeted awareness email to 3 users who clicked"],
+    "false_positive_risk": "LOW",
+    "false_positive_reason": null,
+    "escalate_to_human": false,
+    "summary": "PayPal typosquat phishing email targeting Finance team successfully blocked by gateway -- no delivery"
+  }
+}

